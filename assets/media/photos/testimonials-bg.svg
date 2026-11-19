@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1350" width="2400" height="1350">
-<defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#4A4039"/><stop offset="1" stop-color="#2F2823"/></linearGradient>
-<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter></defs>
-<rect width="2400" height="1350" fill="url(#g)"/><circle cx="1200.0" cy="567.0" r="351.0" fill="#6E6158" opacity=".45"/><rect width="2400" height="1350" filter="url(#n)"/>
-<g font-family="Helvetica, Arial, sans-serif" fill="#E2D9CA" text-anchor="middle" opacity=".72">
-<text x="1200.0" y="121.5" font-size="60" font-weight="700" letter-spacing="10.799999999999999">TESTIMONIALS BACKGROUND</text>
-<text x="1200.0" y="217.5" font-size="43.199999999999996" letter-spacing="3.5999999999999996">2400 × 1350 · 16:9</text></g>
-</svg>

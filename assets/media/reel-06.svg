@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
-<defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#2A2A31"/><stop offset="1" stop-color="#000009"/></linearGradient>
-<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter></defs>
-<rect width="540" height="960" fill="url(#g)"/><path d="M145.8 672.0 V316.2 A124.2 124.2 0 0 1 394.20000000000005 316.2 V672.0 Z" fill="#4C4C55" opacity=".4"/><rect width="540" height="960" filter="url(#n)"/>
-<g font-family="Helvetica, Arial, sans-serif" fill="#CBD0D5" text-anchor="middle" opacity=".72">
-<text x="270.0" y="787.1999999999999" font-size="24" font-weight="700" letter-spacing="4.32">VIDEO 06</text>
-<text x="270.0" y="825.5999999999999" font-size="17.28" letter-spacing="1.44">poster · 1080 × 1920</text></g>
-</svg>

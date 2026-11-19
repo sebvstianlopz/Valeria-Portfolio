@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200">
-<defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#DADBDC"/><stop offset="1" stop-color="#A9AAAC"/></linearGradient>
-<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter></defs>
-<rect width="900" height="1200" fill="url(#g)"/><path d="M243.0 840.0 V447.0 A207.0 207.0 0 0 1 657.0 447.0 V840.0 Z" fill="#F1F1F2" opacity=".4"/><rect width="900" height="1200" filter="url(#n)"/>
-<g font-family="Helvetica, Arial, sans-serif" fill="#000009" text-anchor="middle" opacity=".72">
-<text x="450.0" y="983.9999999999999" font-size="40" font-weight="700" letter-spacing="7.199999999999999">SERVICES PHOTO</text>
-<text x="450.0" y="1048.0" font-size="28.799999999999997" letter-spacing="2.4">900 × 1200 · 3:4</text></g>
-</svg>

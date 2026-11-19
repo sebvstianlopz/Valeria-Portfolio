@@ -1,18 +1,17 @@
 /* ==========================================================================
    SITE CONTENT: the one file to edit.
-   Swap the placeholders below with Valeria's real work. No build step needed:
-   save the file, refresh the page.
+   Real work from Valeria's Canva portfolio is already in. Items marked
+   PLACEHOLDER still need her real details. No build step: save and refresh.
    ========================================================================== */
 
 window.SITE = {
   /* ---- WhatsApp -------------------------------------------------------- */
-  // International format, digits only (country code + number). e.g. "34612345678"
+  // PLACEHOLDER: international format, digits only (country code + number). e.g. "34612345678"
   whatsappNumber: "10000000000",
-  // Message pre-filled when someone taps a general "Let's talk" button.
   whatsappMessage:
     "Hi Valeria! I just saw your portfolio and I'd love to talk about my brand's social media.",
 
-  /* ---- Social profiles ------------------------------------------------- */
+  /* ---- Social profiles (PLACEHOLDER links) ---------------------------- */
   // icon: "instagram" | "tiktok" | "linkedin" | "youtube" | "pinterest"
   socials: [
     { label: "Instagram", icon: "instagram", url: "https://instagram.com/" },
@@ -20,32 +19,36 @@ window.SITE = {
     { label: "LinkedIn", icon: "linkedin", url: "https://linkedin.com/" },
   ],
 
-  /* ---- Page photos (replace the files, or point to new ones) ---------- */
+  /* ---- Page photos ----------------------------------------------------- */
   photos: {
-    hero: "assets/media/photos/hero.svg",                       // 4:5, ~1200×1500
-    about: "assets/media/photos/about.svg",                     // 4:5, ~800×1000
-    services: "assets/media/photos/services.svg",               // 3:4, ~900×1200
-    testimonialsBg: "assets/media/photos/testimonials-bg.svg",  // 16:9, ~2400×1350
-    contactBg: "assets/media/photos/contact-bg.svg",            // 16:9, ~2400×1350
+    hero: "assets/media/work/valeria-portrait.jpg",
+    aboutA: "assets/media/work/video-04.jpg",
+    aboutB: "assets/media/work/campaign-03.jpg",
+    aboutC: "assets/media/work/social-05.jpg",
+    services: "assets/media/work/social-02.jpg",
+    testimonialsBg: "assets/media/work/testimonials-bg.jpg",
+    contactBg: "assets/media/work/contact-bg.jpg",
   },
 
-  /* ---- "Backed by brands" stat boxes ---------------------------------- */
+  /* ---- "Backed by brands" stat boxes (PLACEHOLDER numbers) ------------ */
   highlights: [
     { value: "40+", label: "Brands" },
     { value: "12M+", label: "Organic views" },
     { value: "5 yrs", label: "Of experience" },
   ],
 
-  /* ---- Brand names (shown as wordmarks; swap for logo images later) --- */
+  /* ---- Brand names (PLACEHOLDER: replace with real clients) ----------- */
   brands: ["Maison Lune", "Nº 7 Skincare", "Oro Coffee", "Alma Swim", "Terra Living", "Kintsu"],
 
-  /* ---- Niches & services pills ---------------------------------------- */
-  services: [
-    "Social Media Management", "Content Strategy", "Reels & TikTok", "Brand Films",
-    "UGC Content", "Product Photography", "Community Management", "Paid Social Creative",
+  /* ---- Skills & expertise (from the Canva portfolio) ------------------ */
+  skills: [
+    { title: "Social Media Management", items: ["Content Strategy", "Content Planning & Scheduling", "Community Management"] },
+    { title: "Content Creation", items: ["Photography & Videography", "Video Editing", "Copywriting & Captions"] },
+    { title: "Event Coverage", items: ["Event Photography & Videography", "Event Recaps"] },
   ],
+  niches: "Health & Aesthetics · Wellness · Hospitality · Events",
 
-  /* ---- "Content that performs" headline numbers (count up) ------------ */
+  /* ---- "Content that performs" numbers (PLACEHOLDER) ------------------ */
   metrics: [
     { value: 320, prefix: "+", suffix: "%", label: "Avg. reach growth in 90 days" },
     { value: 12, suffix: "M+", label: "Organic views generated" },
@@ -53,11 +56,11 @@ window.SITE = {
     { value: 98, suffix: "%", label: "Client renewal rate" },
   ],
 
-  /* ---- Charts --------------------------------------------------------- */
+  /* ---- Charts (PLACEHOLDER data) -------------------------------------- */
   charts: {
     growth: {
       title: "Follower growth",
-      note: "Maison Lune · Instagram, thousands",
+      note: "Example client · Instagram, thousands",
       unit: "K",
       points: [
         { label: "Jan", value: 4 }, { label: "Feb", value: 6 }, { label: "Mar", value: 9 },
@@ -76,7 +79,7 @@ window.SITE = {
     },
     reach: {
       title: "Monthly reach",
-      note: "Oro Coffee · all platforms, thousands",
+      note: "Example client · all platforms, thousands",
       unit: "K",
       items: [
         { label: "Apr", value: 42 }, { label: "May", value: 68 }, { label: "Jun", value: 95 },
@@ -88,65 +91,73 @@ window.SITE = {
     "Content built around saves, shares and repeat views, the signals the algorithm rewards most, " +
     "so growth keeps compounding long after a post goes live.",
 
-  /* ---- Videos ---------------------------------------------------------- */
-  // category: "paid" (paid social / ads) or "organic" (organic concepts)
-  // poster: thumbnail image (a frame from the video, 9:16).
-  // src (optional): a self-hosted file ("assets/media/my-reel.mp4"), a YouTube or Vimeo
-  //   link (embedded), or an Instagram/TikTok post link (opens in a new tab).
+  /* ---- Social media shoot (from the Canva portfolio) ------------------ */
+  social: {
+    text: "Content shoots for an aesthetics clinic: treatments, technology and the team behind them, shot and edited for Instagram.",
+    photos: [
+      { src: "assets/media/work/social-01.jpg", client: "Aesthetics clinic", desc: "Facial treatment, detail shot." },
+      { src: "assets/media/work/social-02.jpg", client: "Aesthetics clinic", desc: "Hydrating mask treatment." },
+      { src: "assets/media/work/social-03.jpg", client: "Aesthetics clinic", desc: "Specialist at work." },
+      { src: "assets/media/work/social-04.jpg", client: "Aesthetics clinic", desc: "Treatment technology." },
+      { src: "assets/media/work/social-05.jpg", client: "Aesthetics clinic", desc: "Laser session with the team." },
+      { src: "assets/media/work/social-06.jpg", client: "Aesthetics clinic", desc: "The treatment room." },
+    ],
+  },
+
+  /* ---- Videos (from the Canva portfolio) ------------------------------ */
+  // poster: cover image (9:16). src (optional): a self-hosted file ("assets/media/my-reel.mp4"),
+  // a YouTube/Vimeo link (embedded), or an Instagram/TikTok post link (opens in a new tab).
+  videoGroups: [{ id: "launch", caps: "Service launches for", script: "Brands" }],
   videos: [
-    { category: "paid", client: "Alma Swim", title: "Summer drop", desc: "Launch ad set for the new collection.", metric: "Sold out in 48h", poster: "assets/media/reel-01.svg", src: "" },
-    { category: "paid", client: "Nº 7 Skincare", title: "The ritual", desc: "Hero film cut into 24 ad variations.", metric: "−42% CPA", poster: "assets/media/reel-02.svg", src: "" },
-    { category: "paid", client: "Velvet & Co.", title: "Holiday edit", desc: "Gift-guide ads for the holiday season.", metric: "3.1× ROAS", poster: "assets/media/reel-03.svg", src: "" },
-    { category: "paid", client: "Bloom Studio", title: "Unboxing, honestly", desc: "UGC-style ads with real customers.", metric: "4.8% CTR", poster: "assets/media/reel-04.svg", src: "" },
-    { category: "organic", client: "Maison Lune", title: "Golden hour", desc: "Weekly reel series for the brand feed.", metric: "1.4M views", poster: "assets/media/reel-05.svg", src: "" },
-    { category: "organic", client: "Oro Coffee", title: "Behind the roast", desc: "Day-in-the-life storytelling.", metric: "920K views", poster: "assets/media/reel-06.svg", src: "" },
-    { category: "organic", client: "Terra Living", title: "Slow mornings", desc: "Lifestyle concept for home goods.", metric: "38K shares", poster: "assets/media/reel-07.svg", src: "" },
-    { category: "organic", client: "Kintsu", title: "Made by hand", desc: "Process video for a ceramics studio.", metric: "2.2M views", poster: "assets/media/reel-08.svg", src: "" },
+    { group: "launch", client: "Psiquiatría", title: "Welcome to the future", desc: "Service launch video for a psychiatry practice.", metric: "Service launch", poster: "assets/media/work/video-01.jpg", src: "" },
+    { group: "launch", client: "Esteticista", title: "Your skincare routine", desc: "Educational reel for an aesthetician.", metric: "Service launch", poster: "assets/media/work/video-02.jpg", src: "" },
+    { group: "launch", client: "Psiquiatría", title: "Your first appointment", desc: "What to expect at a first psychiatry visit.", metric: "Service launch", poster: "assets/media/work/video-03.jpg", src: "" },
+    { group: "launch", client: "Barra", title: "Fall cocktails", desc: "Seasonal menu launch for a cocktail bar.", metric: "Menu launch", poster: "assets/media/work/video-04.jpg", src: "" },
   ],
 
-  /* ---- Photography ----------------------------------------------------- */
-  // category: "paid" or "organic" · src: the photo itself (4:5 works best)
-  photography: [
-    { category: "paid", client: "Nº 7 Skincare", desc: "Product hero for paid social.", src: "assets/media/photos/photo-01.svg" },
-    { category: "paid", client: "Alma Swim", desc: "Campaign still for the summer drop.", src: "assets/media/photos/photo-02.svg" },
-    { category: "paid", client: "Oro Coffee", desc: "Menu launch creative.", src: "assets/media/photos/photo-03.svg" },
-    { category: "paid", client: "Velvet & Co.", desc: "Gift-guide product flat lay.", src: "assets/media/photos/photo-04.svg" },
-    { category: "organic", client: "Maison Lune", desc: "Lifestyle shoot for the feed.", src: "assets/media/photos/photo-05.svg" },
-    { category: "organic", client: "Terra Living", desc: "Interior styling series.", src: "assets/media/photos/photo-06.svg" },
-    { category: "organic", client: "Kintsu", desc: "Studio and process details.", src: "assets/media/photos/photo-07.svg" },
-    { category: "organic", client: "Bloom Studio", desc: "Behind-the-scenes content.", src: "assets/media/photos/photo-08.svg" },
-  ],
+  /* ---- Campaign (from the Canva portfolio) ---------------------------- */
+  campaign: {
+    name: "Mother's Day",
+    text: "A Mother's Day creative campaign concept, from art direction to final design.",
+    photos: [
+      { src: "assets/media/work/campaign-01.jpg", desc: "Hands, flowers and a quiet moment." },
+      { src: "assets/media/work/campaign-02.jpg", desc: "The bouquet and the handwritten card." },
+      { src: "assets/media/work/campaign-03.jpg", desc: "Mother and daughter, the hero shot." },
+      { src: "assets/media/work/campaign-04.jpg", desc: "The “Mamá” card, styled detail." },
+      { src: "assets/media/work/campaign-05.jpg", desc: "A single gerbera, closing frame." },
+    ],
+  },
 
-  /* ---- Case studies ---------------------------------------------------- */
+  /* ---- Case studies (PLACEHOLDER) ------------------------------------- */
   cases: [
-    { client: "Maison Lune", industry: "Fashion", challenge: "A beautiful product with a quiet feed and posts that vanished in hours.", kpi: "Followers", from: "4K", to: "61K", time: "in 9 months" },
-    { client: "Nº 7 Skincare", industry: "Beauty", challenge: "A new line launching against brands with ten times the budget.", kpi: "Cost per sale", from: "$38", to: "$22", time: "in 1 launch" },
-    { client: "Oro Coffee", industry: "Hospitality", challenge: "A loved café with no time to post and no clear voice online.", kpi: "Engagement", from: "0.9%", to: "5.6%", time: "in 6 months" },
+    { client: "Aesthetics clinic", industry: "Health & Aesthetics", challenge: "Great treatments, but a feed that didn't show the experience.", kpi: "Followers", from: "4K", to: "61K", time: "in 9 months" },
+    { client: "Psychiatry practice", industry: "Health", challenge: "A new service that patients needed explained, warmly and clearly.", kpi: "Booked consults", from: "12", to: "40", time: "per month" },
+    { client: "Cocktail bar", industry: "Hospitality", challenge: "A seasonal menu launch that needed to fill tables fast.", kpi: "Engagement", from: "0.9%", to: "5.6%", time: "in 6 months" },
   ],
 
-  /* ---- Packages ------------------------------------------------------- */
+  /* ---- Packages (PLACEHOLDER prices) ---------------------------------- */
   packages: [
     {
       name: "Essential", price: "$900", per: "/ month", featured: false,
       tagline: "Show up consistently.",
-      items: ["1 platform managed", "12 posts / month incl. 4 reels", "Content calendar & captions", "Monthly performance report"],
+      items: ["1 platform managed", "12 posts / month incl. 4 reels", "Content planning & captions", "Monthly performance report"],
     },
     {
       name: "Signature", price: "$1,800", per: "/ month", featured: true,
-      tagline: "Full management + original video.",
-      items: ["2 platforms managed", "20 posts / month incl. 8 reels", "Monthly on-location shoot", "Product & lifestyle photography", "Community management"],
+      tagline: "Full management + original content.",
+      items: ["2 platforms managed", "20 posts / month incl. 8 reels", "Monthly photo & video shoot", "Community management", "Strategy calls"],
     },
     {
       name: "Studio", price: "$3,200", per: "/ month", featured: false,
       tagline: "Your complete content department.",
-      items: ["Up to 4 platforms", "Brand film + short-form cut-downs", "Paid social creative & testing", "UGC & creator coordination", "Priority WhatsApp line"],
+      items: ["Up to 4 platforms", "Service & product launch videos", "Seasonal campaigns, concept to design", "Event coverage & recaps", "Priority WhatsApp line"],
     },
   ],
 
-  /* ---- Testimonials --------------------------------------------------- */
+  /* ---- Testimonials (PLACEHOLDER) ------------------------------------- */
   testimonials: [
-    { quote: "Valeria didn't just make our feed beautiful, she made it sell. We sold out our summer collection in two days.", name: "Lucía M.", role: "Founder, Alma Swim" },
-    { quote: "For the first time our content feels like us. People actually stop to watch, and then they buy.", name: "Daniel R.", role: "Marketing Lead, Nº 7 Skincare" },
-    { quote: "I handed over social media completely and got my evenings back. The numbers keep going up every month.", name: "Sofía T.", role: "Owner, Oro Coffee" },
+    { quote: "Valeria understood our clinic right away. Our content finally shows what it feels like to be treated here.", name: "Client name", role: "Aesthetics clinic" },
+    { quote: "The launch videos explained our new service better than we ever could. Patients mention them at their first visit.", name: "Client name", role: "Psychiatry practice" },
+    { quote: "Our fall menu sold out the first weekend. The cocktail video did all the work.", name: "Client name", role: "Cocktail bar" },
   ],
 };

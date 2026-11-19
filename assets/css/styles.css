@@ -134,12 +134,12 @@ p, li { text-wrap: pretty; }
 .nav { position: sticky; top: 0; z-index: 50; background: var(--ink); color: var(--paper); }
 .nav__inner { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .nav__mark { font-family: var(--caps); font-weight: 900; font-stretch: 125%; font-size: 20px; letter-spacing: .02em; }
-.nav__links { display: none; gap: clamp(20px, 2.6vw, 40px); font-size: 12.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+.nav__links { display: none; gap: clamp(18px, 2.2vw, 34px); font-size: 12.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
 .nav__links a { padding: 8px 0; position: relative; color: var(--on-dark); transition: color .3s var(--ease); }
 .nav__links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1.5px; background: var(--mist); transform: scaleX(0); transition: transform .4s var(--ease-out); }
 .nav__links a:hover { color: #fff; }
 .nav__links a:hover::after { transform: scaleX(1); }
-@media (min-width: 940px) { .nav__links { display: flex; } }
+@media (min-width: 1100px) { .nav__links { display: flex; } }
 
 /* ---- Hero ------------------------------------------------------------- */
 .hero { display: grid; gap: clamp(28px, 4vw, 64px); align-items: center; }
@@ -191,6 +191,61 @@ p, li { text-wrap: pretty; }
 .services__photo { border-radius: 400px 400px var(--r-md) var(--r-md); overflow: hidden; aspect-ratio: 3 / 4; max-width: 380px; width: 100%; justify-self: center; border: 2px solid var(--ink); }
 .services__photo img { width: 100%; height: 100%; object-fit: cover; }
 @media (min-width: 860px) { .services { grid-template-columns: 1.3fr .7fr; } }
+
+/* ---- Section numbers (from the Canva portfolio) ---------------------- */
+.num { display: block; font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: .14em; color: var(--muted); margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+.card--espresso .num, .num--light { color: var(--on-dark-muted); }
+.num--light { color: var(--sand); }
+
+/* ---- About collage ---------------------------------------------------- */
+.collage { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1 / 1.05; justify-self: center; }
+.collage img {
+  position: absolute; width: 56%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px;
+  border: 5px solid var(--paper); box-shadow: 0 24px 40px -22px rgba(0, 0, 0, .75);
+}
+.collage img:nth-child(1) { left: 0; top: 8%; transform: rotate(-7deg); }
+.collage img:nth-child(2) { left: 22%; top: 0; z-index: 2; transform: rotate(2deg); }
+.collage img:nth-child(3) { right: 0; top: 14%; transform: rotate(8deg); }
+
+/* ---- Skills (three columns) ------------------------------------------- */
+.skills { display: grid; gap: 22px; }
+@media (min-width: 640px) { .skills { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+.skill { background: var(--paper); border: 1.5px solid var(--ink); border-radius: var(--r-md); padding: 20px 18px; }
+.skill h3 { font-family: var(--script); font-weight: 400; font-size: 34px; line-height: 1; margin-bottom: 12px; }
+.skill li { display: flex; gap: 10px; align-items: baseline; font-size: 14.5px; padding: 6px 0; border-top: 1px solid var(--line); }
+.skill li::before { content: "—"; color: var(--muted); flex: none; }
+
+/* ---- Social media card ------------------------------------------------ */
+.social { display: grid; gap: clamp(26px, 4vw, 56px); align-items: center; }
+.social .caps-title { margin-bottom: 18px; }
+.social__text { max-width: 30em; margin-bottom: 26px; }
+.social__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-radius: var(--r-md); overflow: hidden; }
+@media (min-width: 900px) { .social { grid-template-columns: .8fr 1.2fr; } }
+
+/* Clickable photo tiles (social grid + campaign strip) */
+.tile { position: relative; display: block; overflow: hidden; background: var(--espresso); }
+.tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out), filter .5s var(--ease); }
+.tile:hover img, .tile:focus-visible img { transform: scale(1.06); }
+.tile::after { content: "+"; position: absolute; right: 10px; bottom: 10px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--mist); color: var(--ink); font-size: 18px; font-weight: 600; opacity: 0; transform: scale(.8); transition: opacity .3s var(--ease), transform .4s var(--ease-out); }
+.tile:hover::after, .tile:focus-visible::after { opacity: 1; transform: none; }
+.tile:focus-visible { outline-offset: -3px; }
+.tile--social { aspect-ratio: 5 / 7; }
+
+/* ---- Videography head -------------------------------------------------- */
+.showcase__head { text-align: right; margin-bottom: clamp(18px, 3vw, 34px); }
+.showcase__head .num { margin-bottom: 6px; }
+
+/* ---- Campaign card ---------------------------------------------------- */
+.campaign__head { display: grid; gap: 18px 48px; align-items: end; margin-bottom: clamp(26px, 4vw, 48px); }
+.campaign__text { font-size: clamp(14px, 1.3vw, 16px); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--on-dark); max-width: 26em; }
+@media (min-width: 900px) { .campaign__head { grid-template-columns: auto 1fr; } }
+.campaign__strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; border-radius: var(--r-md); overflow: hidden; }
+.tile--campaign { aspect-ratio: 2 / 3; }
+@media (max-width: 640px) {
+  .campaign__strip { grid-template-columns: repeat(6, 1fr); }
+  .tile--campaign { grid-column: span 2; }
+  .tile--campaign:nth-child(4), .tile--campaign:nth-child(5) { grid-column: span 3; aspect-ratio: 1 / 1; }
+}
 
 /* ---- Results + charts ------------------------------------------------- */
 .results__head { display: grid; gap: 28px; align-items: end; margin-bottom: clamp(26px, 3vw, 40px); }
@@ -401,6 +456,11 @@ p, li { text-wrap: pretty; }
 body.no-scroll { overflow: hidden; }
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(20px) scale(.98); } }
+
+/* ---- Section-specific signature placement ----------------------------- */
+.campaign .sig { padding-bottom: .95em; }
+.campaign .sig__script { left: 1.6em; right: auto; bottom: -.12em; font-size: 1.1em; }
+.quotes::after { background: linear-gradient(180deg, rgba(0, 0, 9, .66), rgba(0, 0, 9, .78)); }
 
 /* ---- Reveal on scroll ------------------------------------------------- */
 .js .reveal { opacity: 0; translate: 0 22px; transition: opacity .9s var(--ease), translate 1s var(--ease-out); transition-delay: var(--d, 0s); }

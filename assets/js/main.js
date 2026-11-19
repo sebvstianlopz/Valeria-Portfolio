@@ -6,7 +6,7 @@
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
-  var GROUP = { paid: "Paid social", organic: "Organic" };
+
 
   function esc(str) {
     return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
@@ -60,10 +60,16 @@
     }).join("");
   }
 
-  function renderServices() {
-    var ul = $("[data-services]");
-    if (!ul) return;
-    ul.innerHTML = (S.services || []).map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("");
+  function renderSkills() {
+    var box = $("[data-skills]");
+    if (box) {
+      box.innerHTML = (S.skills || []).map(function (g, i) {
+        return '<div class="skill reveal" style="--d:' + (i * 0.08) + 's"><h3>' + esc(g.title) + "</h3><ul>" +
+          g.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ul></div>";
+      }).join("");
+    }
+    var n = $("[data-niches]");
+    if (n) n.textContent = S.niches || "";
   }
 
   /* ---- Metrics + counters -------------------------------------------- */
@@ -235,41 +241,55 @@
   function isFile(src) { return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(src || ""); }
 
   function renderShowcase() {
-    (S.videos || []).forEach(function (v) { ITEMS.push({ type: "video", d: v }); });
-    (S.photography || []).forEach(function (p) { ITEMS.push({ type: "photo", d: p }); });
+    var social = S.social || { photos: [] }, campaign = S.campaign || { photos: [] };
+    social.photos.forEach(function (p) { ITEMS.push({ type: "photo", set: "social", d: p }); });
+    (S.videos || []).forEach(function (v) { ITEMS.push({ type: "video", set: "video", d: v }); });
+    campaign.photos.forEach(function (p) { ITEMS.push({ type: "photo", set: "campaign", d: p }); });
 
-    $$("[data-videos]").forEach(function (box) {
-      var cat = box.getAttribute("data-videos");
-      box.innerHTML = ITEMS.map(function (it, idx) {
-        if (it.type !== "video" || it.d.category !== cat) return "";
-        var v = it.d, media = '<img src="' + esc(v.poster) + '" alt="" loading="lazy">';
-        if (isFile(v.src)) media += '<video muted loop playsinline preload="none" src="' + esc(v.src) + '"></video>';
-        return '<button class="item reveal" data-index="' + idx + '" aria-label="Play ' + esc(v.title) + " for " + esc(v.client) + ", " + esc(v.metric) + '">' +
-          '<span class="phone">' + media + '<span class="phone__play">' + PLAY + '</span><span class="chip">' + esc(v.metric) + "</span></span>" +
-          '<span class="item__info"><span class="item__client">' + esc(v.client) + '</span><span class="item__desc">' + esc(v.desc) + "</span></span></button>";
-      }).join("");
-    });
+    function tile(idx, cls) {
+      var p = ITEMS[idx].d, label = p.client ? p.client + ": " + p.desc : campaign.name + " campaign: " + p.desc;
+      return '<button class="tile ' + cls + ' reveal" data-index="' + idx + '" aria-label="View photo, ' + esc(label) + '">' +
+        '<img src="' + esc(p.src) + '" alt="' + esc(label) + '" loading="lazy"></button>';
+    }
 
-    $$("[data-photos]").forEach(function (box) {
-      var cat = box.getAttribute("data-photos");
-      box.innerHTML = ITEMS.map(function (it, idx) {
-        if (it.type !== "photo" || it.d.category !== cat) return "";
-        var p = it.d;
-        return '<button class="item reveal" data-index="' + idx + '" aria-label="View photo for ' + esc(p.client) + '">' +
-          '<span class="photo"><img src="' + esc(p.src) + '" alt="' + esc(p.client + ": " + p.desc) + '" loading="lazy"></span>' +
-          '<span class="item__info"><span class="item__client">' + esc(p.client) + '</span><span class="item__desc">' + esc(p.desc) + "</span></span></button>";
+    // Social media grid
+    var st = $("[data-social-text]"); if (st) st.textContent = social.text || "";
+    var sg = $("[data-social]");
+    if (sg) sg.innerHTML = ITEMS.map(function (it, i) { return it.set === "social" ? tile(i, "tile--social") : ""; }).join("");
+
+    // Video groups
+    var vg = $("[data-video-groups]");
+    if (vg) {
+      vg.innerHTML = (S.videoGroups || [{ id: "", caps: "", script: "" }]).map(function (g) {
+        var cards = ITEMS.map(function (it, idx) {
+          if (it.set !== "video" || (g.id && it.d.group !== g.id)) return "";
+          var v = it.d, media = '<img src="' + esc(v.poster) + '" alt="" loading="lazy">';
+          if (isFile(v.src)) media += '<video muted loop playsinline preload="none" src="' + esc(v.src) + '"></video>';
+          return '<button class="item reveal" data-index="' + idx + '" aria-label="Play ' + esc(v.title) + " for " + esc(v.client) + '">' +
+            '<span class="phone">' + media + '<span class="phone__play">' + PLAY + '</span><span class="chip">' + esc(v.metric) + "</span></span>" +
+            '<span class="item__info"><span class="item__client">' + esc(v.client) + '</span><span class="item__desc">' + esc(v.desc) + "</span></span></button>";
+        }).join("");
+        return '<div class="showcase__group">' +
+          (g.caps ? '<h3 class="sig sig--sub reveal"><span class="sig__caps">' + esc(g.caps) + '</span><span class="sig__script">' + esc(g.script) + "</span></h3>" : "") +
+          '<div class="phones">' + cards + "</div></div>";
       }).join("");
-    });
+    }
+
+    // Campaign strip
+    var cn = $("[data-campaign-name]"); if (cn) cn.textContent = campaign.name || "";
+    var ct = $("[data-campaign-text]"); if (ct) ct.textContent = campaign.text || "";
+    var cs = $("[data-campaign]");
+    if (cs) cs.innerHTML = ITEMS.map(function (it, i) { return it.set === "campaign" ? tile(i, "tile--campaign") : ""; }).join("");
 
     // Stagger reveals within each row
-    $$(".phones, .photos").forEach(function (row) {
-      $$(".item", row).forEach(function (it, i) { it.style.setProperty("--d", (i * 0.07) + "s"); });
+    $$(".phones, .social__grid, .campaign__strip").forEach(function (row) {
+      $$(".item, .tile", row).forEach(function (it, i) { it.style.setProperty("--d", (i * 0.06) + "s"); });
     });
 
     // Muted previews for self-hosted videos: hover on desktop, in view on touch
     if (reduceMotion) return;
     var canHover = window.matchMedia("(hover: hover)").matches;
-    $$("[data-videos] .item").forEach(function (item) {
+    $$("[data-video-groups] .item").forEach(function (item) {
       var vid = $("video", item);
       if (!vid) return;
       var play = function () { var p = vid.play(); if (p && p.catch) p.catch(function () {}); item.classList.add("is-playing"); };
@@ -365,14 +385,27 @@
     } else {
       media.innerHTML = '<img src="' + esc(d.poster) + '" alt="' + esc(d.title) + ' preview">';
     }
-    var isVideo = it.type === "video";
-    $("[data-lb-cat]", lb).textContent = (isVideo ? "videography" : "photography") + " · " + (GROUP[d.category] || d.category).toLowerCase();
-    $("[data-lb-title]", lb).textContent = isVideo ? d.title : d.client;
-    $("[data-lb-desc]", lb).textContent = isVideo ? d.client + ": " + d.desc : d.desc;
-    $("[data-lb-metric]", lb).textContent = isVideo ? d.metric : "";
-    $("[data-lb-cta]", lb).href = waLink(isVideo
-      ? "Hi Valeria! I loved your \"" + d.title + "\" video for " + d.client + ". I'd like something like this for my brand."
-      : "Hi Valeria! I loved the photos you made for " + d.client + ". I'd like something like this for my brand.");
+    var camp = S.campaign || {}, msg;
+    if (it.set === "video") {
+      $("[data-lb-cat]", lb).textContent = "videography";
+      $("[data-lb-title]", lb).textContent = d.title;
+      $("[data-lb-desc]", lb).textContent = d.client + ": " + d.desc;
+      $("[data-lb-metric]", lb).textContent = d.metric || "";
+      msg = "Hi Valeria! I loved your \"" + d.title + "\" video for " + d.client + ". I'd like something like this for my brand.";
+    } else if (it.set === "campaign") {
+      $("[data-lb-cat]", lb).textContent = "campaign";
+      $("[data-lb-title]", lb).textContent = camp.name;
+      $("[data-lb-desc]", lb).textContent = d.desc;
+      $("[data-lb-metric]", lb).textContent = "Concept to final design";
+      msg = "Hi Valeria! I loved your " + camp.name + " campaign. I'd like a campaign like this for my brand.";
+    } else {
+      $("[data-lb-cat]", lb).textContent = "social media";
+      $("[data-lb-title]", lb).textContent = d.client;
+      $("[data-lb-desc]", lb).textContent = d.desc;
+      $("[data-lb-metric]", lb).textContent = "";
+      msg = "Hi Valeria! I loved the social media content you made for the " + d.client.toLowerCase() + ". I'd like something like this for my brand.";
+    }
+    $("[data-lb-cta]", lb).href = waLink(msg);
   }
 
   function open(idx, opener) {
@@ -389,8 +422,8 @@
     if (lastFocus) lastFocus.focus();
   }
   function step(dir) {
-    var type = ITEMS[cur].type;
-    var list = ITEMS.map(function (it, i) { return it.type === type ? i : -1; }).filter(function (i) { return i > -1; });
+    var set = ITEMS[cur].set;
+    var list = ITEMS.map(function (it, i) { return it.set === set ? i : -1; }).filter(function (i) { return i > -1; });
     var pos = list.indexOf(cur);
     fill(list[(pos + dir + list.length) % list.length]);
   }
@@ -398,7 +431,7 @@
   function wireLightbox() {
     if (!lb) return;
     document.addEventListener("click", function (e) {
-      var item = e.target.closest(".item[data-index]");
+      var item = e.target.closest("[data-index]");
       if (item) open(+item.dataset.index, item);
     });
     $$("[data-close]", lb).forEach(function (b) { b.addEventListener("click", close); });
@@ -443,7 +476,7 @@
   renderSocials();
   renderBrands();
   renderHighlights();
-  renderServices();
+  renderSkills();
   renderMetrics();
   renderCharts();
   renderShowcase();
