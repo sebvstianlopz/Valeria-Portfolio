@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#E9DCCB"/><stop offset="1" stop-color="#B98E6F"/></linearGradient>
+<radialGradient id="l" cx=".7" cy=".25" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .09 0"/></filter>
+</defs>
+<rect width="540" height="960" fill="url(#g)"/>
+<circle cx="334.8" cy="364.8" r="162.0" fill="#F8EFE4" opacity=".55"/>
+<rect width="540" height="960" fill="url(#l)"/>
+<rect width="540" height="960" filter="url(#n)"/>
+</svg>
