@@ -1,56 +1,71 @@
-# Valeria Ortiz — Portfolio
+# Valeria Ortiz | Portfolio
 
-A calm, editorial one-page portfolio for social media manager and video creator **Valeria Ortiz**.
-The whole page has one job: show the work and the results, then make it easy for a potential client to message Valeria on WhatsApp.
+A one-page portfolio and media kit for social media manager and content creator **Valeria Ortiz**.
+The page has one job: show her work and results, then make it easy for a potential client to message her on WhatsApp.
 
 Plain HTML, CSS and JavaScript. No build step, no dependencies.
+
+## Look and feel
+
+- **Palette:** `#000009` ink · `#2F2823` espresso · `#E2D9CA` sand · `#CBD0D5` mist · `#CBCCCD` grey, plus `#F6F3EE` paper (a light tint of sand). All are tokens at the top of `assets/css/styles.css`.
+- **Type:** *Archivo* (heavy, expanded, all caps) for headlines, *Mrs Saint Delafield* for the handwritten script accents, *Manrope* for body text.
+- **Layout:** rounded bento cards on a grey backdrop, plus full-width photo sections for testimonials and contact.
 
 ## Structure
 
 ```
-index.html              page markup and copy (hero, services, about, FAQ…)
-assets/css/styles.css   design tokens (colours, fonts) and all styling
-assets/js/content.js    ← edit this file to change videos, numbers, packages, testimonials
-assets/js/main.js       behaviour (gallery, lightbox, counters, slider, WhatsApp links)
-assets/media/           images and videos (currently placeholders)
-assets/favicon.svg      "vo" monogram
+index.html              page markup and copy
+assets/css/styles.css   design tokens and all styling
+assets/js/content.js    ← edit this file: WhatsApp number, photos, videos, stats, charts, packages…
+assets/js/main.js       behaviour (galleries, lightbox, charts, counters, slider, WhatsApp links)
+assets/media/           video posters (reel-01 … reel-08)
+assets/media/photos/    page photos and the photography gallery (all placeholders for now)
 ```
 
-## Making it real: what to replace
+## Adding the real photos
 
-All the repeating content lives in **`assets/js/content.js`**:
+Every placeholder image is labelled with its slot name and ideal size. Either overwrite the file with a `.jpg`/`.webp` of the same name and update the extension in `content.js`, or point `content.js` at a new file.
 
-| What | Where in `content.js` |
+| Slot | Where it appears | Shape | Recommended size | Set in `content.js` |
+| --- | --- | --- | --- | --- |
+| Hero | large photo next to the name | 4:5 portrait | 1200 × 1500 | `photos.hero` |
+| About | tilted photo in "Hey, I'm Valeria" | 4:5 portrait | 800 × 1000 | `photos.about` |
+| Services | arch photo in "Niches & Services" | 3:4 portrait | 900 × 1200 | `photos.services` |
+| Testimonials background | full-width section behind the quotes | 16:9 landscape | 2400 × 1350 | `photos.testimonialsBg` |
+| Contact background | full-width "Let's collaborate" section | 16:9 landscape | 2400 × 1350 | `photos.contactBg` |
+| Photography gallery (×8) | Photography section, 4 paid + 4 organic | 4:5 portrait | 1080 × 1350 | `photography[].src` |
+| Video posters (×8) | phone frames in Videography | 9:16 vertical | 1080 × 1920 | `videos[].poster` |
+
+Tips: export JPG or WebP at roughly 80% quality, and keep each file under ~400 KB (backgrounds under ~700 KB). The two background photos get a dark overlay so white text stays readable, so moody or simple images work best.
+
+## Everything else in `content.js`
+
+| What | Key |
 | --- | --- |
 | WhatsApp number (digits only, with country code, e.g. `34612345678`) | `whatsappNumber` |
 | Default WhatsApp message | `whatsappMessage` |
-| Instagram / TikTok / LinkedIn links | `socials` |
-| Brand names in the scrolling strip | `brands` |
-| The four headline results | `metrics` |
-| Video gallery | `videos` |
+| Instagram / TikTok / LinkedIn (also `youtube`, `pinterest`) | `socials` |
+| "Backed by brands" stat boxes | `highlights` |
+| Brand names (shown as wordmarks in two places) | `brands` |
+| Niches & services pills | `services` |
+| "Content that performs" numbers | `metrics` |
+| The three charts (follower growth, views by platform, monthly reach) | `charts` |
+| Videos: `category` is `paid` or `organic` | `videos` |
+| Photos: `category` is `paid` or `organic` | `photography` |
 | Case studies | `cases` |
-| Packages and prices | `packages` |
+| Packages and "starting at" prices | `packages` |
 | Testimonials | `testimonials` |
 
-### Adding videos
+### Videos
 
-1. Put a thumbnail (a still frame, ideally 1080×1920 `.jpg` or `.webp`) in `assets/media/`.
-2. Set `poster` to that file, and `src` to one of:
-   - a self-hosted video, e.g. `"assets/media/golden-hour.mp4"`: it plays muted on hover (or when scrolled into view on phones) and with sound in the lightbox. Keep files small (H.264 MP4, under ~8 MB).
-   - a YouTube or YouTube Shorts link, or a Vimeo link: embedded in the lightbox.
-   - an Instagram or TikTok post link: the lightbox shows a "Watch on Instagram/TikTok" link.
-3. `category` must be `reels`, `brand`, `ugc` or `campaign` so the filters work.
+`src` can be:
+- a self-hosted file, e.g. `"assets/media/summer-drop.mp4"`. It plays muted on hover (or when scrolled into view on phones) and with sound in the popup. Keep files small (H.264 MP4, under ~8 MB).
+- a YouTube, YouTube Shorts or Vimeo link, which is embedded in the popup.
+- an Instagram or TikTok post link. The popup shows a "Watch on Instagram/TikTok" link.
 
-### Other copy and images
+### Text written directly in `index.html`
 
-- Hero text, services, process, about, FAQ and the final call to action are written directly in `index.html`.
-- Replace `assets/media/portrait.svg` with a real portrait (4:5) and update the `src` in the About section.
-- Replace `Based in Your City` in the About section.
-- Case study images: `assets/media/case-0X.svg` (4:3).
-
-### Brand colours and fonts
-
-Every colour is a token at the top of `assets/css/styles.css` (`--bone`, `--ink`, `--clay`, `--espresso`, …). Headlines use *Instrument Serif* and body text uses *Manrope* (Google Fonts).
+The hero line, about text, "Based in Your City", process steps, FAQ and contact text.
 
 ## Preview locally
 
@@ -62,4 +77,4 @@ Then open http://localhost:8080.
 
 ## Publishing
 
-It's a static site, so you can upload the whole folder (`index.html` plus `assets/`) to any static web host or a file manager's public web root. Nothing needs to be built or installed.
+It's a static site: upload `index.html` and the `assets/` folder to any static host or a web server's public folder. Nothing needs to be built or installed.

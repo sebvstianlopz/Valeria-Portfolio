@@ -4,13 +4,22 @@
     "ignoreFiles": [],
     "ignoreValues": [
       {
-        "rule": "italic-serif-display",
+        "rule": "text-occlusion",
         "value": "*",
         "files": [
           "index.html"
         ],
-        "createdAt": "2026-11-19T00:23:26.951Z",
-        "reason": "Approved plan specifies editorial register with italic serif accents on single key words (headlines themselves are roman); intentional brand choice"
+        "createdAt": "2026-11-19T00:47:17.334Z",
+        "reason": "User confirmed caps + script overlay headline style; script has a surface-colour stroke so both words stay legible"
+      },
+      {
+        "rule": "heading-rhythm",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-19T00:47:17.341Z",
+        "reason": "Script kicker is intentionally set tight above its heading as one unit (user-chosen caps + script style)"
       }
     ]
   }

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1350" width="2400" height="1350">
+<defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#D7CCBC"/><stop offset="1" stop-color="#8F8172"/></linearGradient>
+<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter></defs>
+<rect width="2400" height="1350" fill="url(#g)"/><path d="M889.5 945.0 V580.5 A310.5 310.5 0 0 1 1510.5 580.5 V945.0 Z" fill="#EEE7DC" opacity=".4"/><rect width="2400" height="1350" filter="url(#n)"/>
+<g font-family="Helvetica, Arial, sans-serif" fill="#2F2823" text-anchor="middle" opacity=".72">
+<text x="1200.0" y="121.5" font-size="60" font-weight="700" letter-spacing="10.799999999999999">CONTACT BACKGROUND</text>
+<text x="1200.0" y="217.5" font-size="43.199999999999996" letter-spacing="3.5999999999999996">2400 × 1350 · 16:9</text></g>
+</svg>

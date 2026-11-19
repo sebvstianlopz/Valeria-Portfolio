@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350">
+<defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#EDE6DA"/><stop offset="1" stop-color="#CDBFA8"/></linearGradient>
+<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter></defs>
+<rect width="1080" height="1350" fill="url(#g)"/><path d="M291.6 945.0 V518.4 A248.4 248.4 0 0 1 788.4000000000001 518.4 V945.0 Z" fill="#F8F4EE" opacity=".4"/><rect width="1080" height="1350" filter="url(#n)"/>
+<g font-family="Helvetica, Arial, sans-serif" fill="#2F2823" text-anchor="middle" opacity=".72">
+<text x="540.0" y="1107.0" font-size="48" font-weight="700" letter-spacing="8.64">PHOTO 01</text>
+<text x="540.0" y="1183.8" font-size="34.56" letter-spacing="2.88">1080 × 1350 · 4:5</text></g>
+</svg>

@@ -1,4 +1,4 @@
-/* Valeria Ortiz — portfolio behaviour. No dependencies. Content lives in content.js */
+/* Valeria Ortiz | portfolio behaviour. No dependencies. Content lives in content.js */
 (function () {
   "use strict";
 
@@ -6,8 +6,7 @@
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
-
-  var CATEGORY = { reels: "Reel", brand: "Brand film", ugc: "UGC", campaign: "Campaign" };
+  var GROUP = { paid: "Paid social", organic: "Organic" };
 
   function esc(str) {
     return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
@@ -15,172 +14,312 @@
     });
   }
 
-  /* ---- WhatsApp links ------------------------------------------------- */
+  /* ---- WhatsApp ------------------------------------------------------- */
   function waLink(message) {
     var num = String(S.whatsappNumber || "").replace(/\D/g, "");
     return "https://wa.me/" + num + "?text=" + encodeURIComponent(message || S.whatsappMessage || "");
   }
-  function wireWhatsApp(root) {
-    $$("[data-wa]", root).forEach(function (a) {
+  function wireWhatsApp() {
+    $$("[data-wa]").forEach(function (a) {
       a.href = waLink(a.getAttribute("data-wa-msg"));
       a.target = "_blank";
       a.rel = "noopener";
     });
   }
 
-  /* ---- Render: brands ------------------------------------------------- */
-  function renderBrands() {
-    var track = $("[data-brands]");
-    if (!track || !S.brands) return;
-    var set = S.brands.map(function (b) { return "<span>" + esc(b) + "</span>"; }).join("");
-    var dup = S.brands.map(function (b) { return '<span aria-hidden="true">' + esc(b) + "</span>"; }).join("");
-    track.innerHTML = set + dup; // duplicated for a seamless loop
+  /* ---- Photos from content.js ---------------------------------------- */
+  function applyPhotos() {
+    var p = S.photos || {};
+    $$("[data-photo]").forEach(function (img) {
+      var src = p[img.getAttribute("data-photo")];
+      if (src) img.src = src;
+    });
   }
 
-  /* ---- Render: metrics ------------------------------------------------ */
-  function renderMetrics() {
-    var box = $("[data-metrics]");
-    if (!box || !S.metrics) return;
-    box.innerHTML = S.metrics.map(function (m, i) {
-      var final = (m.prefix || "") + m.value + (m.suffix || "");
-      return '<div class="metric reveal" style="--d:' + (i * 0.08) + 's">' +
-        '<div class="metric__value" data-count="' + m.value + '" data-prefix="' + esc(m.prefix || "") + '" data-suffix="' + esc(m.suffix || "") + '" aria-label="' + esc(final) + '">' + esc(final) + "</div>" +
-        '<p class="metric__label">' + esc(m.label) + "</p></div>";
+  /* ---- Small renderers ------------------------------------------------ */
+  function renderSocials() {
+    var html = (S.socials || []).map(function (s) {
+      return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener" aria-label="' + esc(s.label) + '">' +
+        '<svg aria-hidden="true"><use href="#i-' + esc(s.icon) + '"/></svg></a></li>';
+    }).join("");
+    $$("[data-socials]").forEach(function (ul) { ul.innerHTML = html; });
+  }
+
+  function renderBrands() {
+    var html = (S.brands || []).map(function (b, i) {
+      return '<li class="wm-' + ((i % 6) + 1) + '">' + esc(b) + "</li>";
+    }).join("");
+    $$("[data-brands], [data-band]").forEach(function (ul) { ul.innerHTML = html; });
+  }
+
+  function renderHighlights() {
+    var ul = $("[data-highlights]");
+    if (!ul) return;
+    ul.innerHTML = (S.highlights || []).map(function (h) {
+      return "<li><strong>" + esc(h.value) + "</strong><span>" + esc(h.label) + "</span></li>";
     }).join("");
   }
 
+  function renderServices() {
+    var ul = $("[data-services]");
+    if (!ul) return;
+    ul.innerHTML = (S.services || []).map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("");
+  }
+
+  /* ---- Metrics + counters -------------------------------------------- */
+  function fmt(v, d) { return d ? v.toFixed(d) : String(Math.round(v)); }
+
+  function renderMetrics() {
+    var box = $("[data-metrics]");
+    if (!box) return;
+    box.innerHTML = (S.metrics || []).map(function (m, i) {
+      var final = (m.prefix || "") + fmt(m.value, m.decimals) + (m.suffix || "");
+      return '<div class="metric reveal" style="--d:' + (i * 0.08) + 's">' +
+        '<div class="metric__value" data-count="' + m.value + '" data-dec="' + (m.decimals || 0) + '" data-prefix="' + esc(m.prefix || "") + '" data-suffix="' + esc(m.suffix || "") + '">' + esc(final) + "</div>" +
+        '<p class="metric__label">' + esc(m.label) + "</p></div>";
+    }).join("");
+    var note = $("[data-performance-note]");
+    if (note) note.textContent = S.performanceNote || "";
+  }
+
   function animateCounters() {
-    var els = $$("[data-count]");
     if (reduceMotion || !("IntersectionObserver" in window)) return;
-    els.forEach(function (el) {
-      el.textContent = el.dataset.prefix + "0" + el.dataset.suffix;
-    });
+    var els = $$("[data-count]");
+    els.forEach(function (el) { el.textContent = el.dataset.prefix + fmt(0, +el.dataset.dec) + el.dataset.suffix; });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
         io.unobserve(e.target);
-        var el = e.target, target = +el.dataset.count, start = null, dur = 1800;
-        function tick(t) {
+        var el = e.target, target = +el.dataset.count, dec = +el.dataset.dec, start = null, dur = 1600;
+        (function tick(t) {
           if (start === null) start = t;
-          var p = Math.min((t - start) / dur, 1);
-          var eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = el.dataset.prefix + Math.round(target * eased) + el.dataset.suffix;
+          var p = Math.min((t - start) / dur, 1), eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = el.dataset.prefix + fmt(target * eased, dec) + el.dataset.suffix;
           if (p < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
+        })(performance.now());
       });
     }, { threshold: 0.5 });
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---- Render: gallery ------------------------------------------------ */
-  var PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>';
+  /* ---- Charts (inline SVG, single hue, hover tooltips) --------------- */
+  var tip = $("[data-tooltip]");
+  function showTip(text, x, y) { if (!tip) return; tip.textContent = text; tip.style.left = x + "px"; tip.style.top = y + "px"; tip.hidden = false; }
+  function hideTip() { if (tip) tip.hidden = true; }
+
+  function niceMax(v) {
+    var pow = Math.pow(10, Math.floor(Math.log10(v))), n = v / pow;
+    var steps = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+    for (var i = 0; i < steps.length; i++) if (n <= steps[i]) return steps[i] * pow;
+    return 10 * pow;
+  }
+  function el(tag, attrs) {
+    var s = "<" + tag;
+    for (var k in attrs) s += " " + k + '="' + attrs[k] + '"';
+    return s + "/>";
+  }
+  function txt(x, y, s, attrs) {
+    var a = "";
+    for (var k in (attrs || {})) a += " " + k + '="' + attrs[k] + '"';
+    return '<text x="' + x + '" y="' + y + '"' + a + ">" + esc(s) + "</text>";
+  }
+  function table(caption, rows, unit) {
+    return '<table class="visually-hidden"><caption>' + esc(caption) + "</caption><tbody>" +
+      rows.map(function (r) { return "<tr><th scope=\"row\">" + esc(r.label) + "</th><td>" + esc(r.value + unit) + "</td></tr>"; }).join("") +
+      "</tbody></table>";
+  }
+  function panel(c, svg) {
+    return '<figure class="chart reveal"><figcaption><div class="chart__title">' + esc(c.title) + '</div><div class="chart__note">' + esc(c.note) + "</div></figcaption>" +
+      svg + table(c.title, c.points || c.items, c.unit) + "</figure>";
+  }
+
+  function lineChart(c) {
+    var W = 320, H = 180, L = 30, R = 34, T = 14, B = 26, pw = W - L - R, ph = H - T - B;
+    var pts = c.points, max = niceMax(Math.max.apply(null, pts.map(function (p) { return p.value; })));
+    var x = function (i) { return L + (pw * i) / (pts.length - 1); };
+    var y = function (v) { return T + ph - (ph * v) / max; };
+    var s = "";
+    [0, 0.5, 1].forEach(function (f) {
+      var gy = y(max * f);
+      s += el("line", { "class": f === 0 ? "c-base" : "c-grid", x1: L, x2: W - R, y1: gy, y2: gy });
+      s += txt(L - 8, gy + 4, f === 0 ? "0" : fmt(max * f) + c.unit, { "text-anchor": "end" });
+    });
+    var d = pts.map(function (p, i) { return (i ? "L" : "M") + x(i).toFixed(1) + " " + y(p.value).toFixed(1); }).join(" ");
+    s += '<path class="c-area" d="' + d + " L" + x(pts.length - 1) + " " + y(0) + " L" + x(0) + " " + y(0) + ' Z"/>';
+    s += '<path class="c-line" d="' + d + '"/>';
+    pts.forEach(function (p, i) { if (i % 2 === 0) s += txt(x(i), H - 6, p.label, { "text-anchor": "middle" }); });
+    var last = pts[pts.length - 1];
+    s += el("circle", { "class": "c-dot", cx: x(pts.length - 1), cy: y(last.value), r: 5 });
+    s += txt(x(pts.length - 1) + 9, y(last.value) + 4, last.value + c.unit, { "class": "c-value" });
+    s += '<g class="c-hover" visibility="hidden">' + el("line", { "class": "c-cross", x1: 0, x2: 0, y1: T, y2: T + ph }) + el("circle", { "class": "c-dot", r: 5, cx: 0, cy: 0 }) + "</g>";
+    s += el("rect", { "class": "c-hit", x: L, y: T, width: pw, height: ph, "data-line": "1" });
+    return panel(c, '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(c.title + ": " + pts[0].value + c.unit + " to " + last.value + c.unit) + '" data-chart="line">' + s + "</svg>");
+  }
+
+  function hbarChart(c) {
+    var W = 320, rowH = 38, T = 6, LBL = 100, R = 40, items = c.items, H = T + rowH * items.length;
+    var max = Math.max.apply(null, items.map(function (i) { return i.value; }));
+    var bw = W - LBL - R, s = "";
+    items.forEach(function (it, i) {
+      var yy = T + i * rowH + 8, w = Math.max(6, (bw * it.value) / max);
+      s += txt(0, yy + 13, it.label, { "class": i === 0 ? "c-value" : "" });
+      s += el("rect", { "class": "c-track", x: LBL, y: yy, width: bw, height: 18, rx: 4 });
+      s += el("rect", { "class": "c-bar", x: LBL, y: yy, width: w.toFixed(1), height: 18, rx: 4, "data-i": i });
+      s += txt(LBL + w + 8, yy + 13, it.value + c.unit, { "class": "c-value" });
+      s += el("rect", { "class": "c-hit", x: 0, y: yy - 8, width: W, height: rowH, "data-i": i, "data-tip": esc(it.label + " · " + it.value + c.unit) });
+    });
+    return panel(c, '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(c.title) + '" data-chart="bars">' + s + "</svg>");
+  }
+
+  function vbarChart(c) {
+    var W = 320, H = 180, L = 34, R = 6, T = 18, B = 26, pw = W - L - R, ph = H - T - B, items = c.items;
+    var max = niceMax(Math.max.apply(null, items.map(function (i) { return i.value; })));
+    var slot = pw / items.length, bw = Math.min(30, slot * 0.56), s = "";
+    [0, 0.5, 1].forEach(function (f) {
+      var gy = T + ph - ph * f;
+      s += el("line", { "class": f === 0 ? "c-base" : "c-grid", x1: L, x2: W - R, y1: gy, y2: gy });
+      s += txt(L - 8, gy + 4, f === 0 ? "0" : fmt(max * f) + c.unit, { "text-anchor": "end" });
+    });
+    items.forEach(function (it, i) {
+      var h = (ph * it.value) / max, x0 = L + slot * i + (slot - bw) / 2, y0 = T + ph - h, r = Math.min(4, h);
+      s += '<path class="c-bar" data-i="' + i + '" d="M' + x0 + " " + (T + ph) + " V" + (y0 + r) + " Q" + x0 + " " + y0 + " " + (x0 + r) + " " + y0 +
+        " H" + (x0 + bw - r) + " Q" + (x0 + bw) + " " + y0 + " " + (x0 + bw) + " " + (y0 + r) + " V" + (T + ph) + ' Z"/>';
+      s += txt(x0 + bw / 2, H - 6, it.label, { "text-anchor": "middle" });
+      if (i === items.length - 1) s += txt(x0 + bw / 2, y0 - 6, it.value + c.unit, { "class": "c-value", "text-anchor": "middle" });
+      s += el("rect", { "class": "c-hit", x: L + slot * i, y: T, width: slot, height: ph, "data-i": i, "data-tip": esc(it.label + " · " + it.value + c.unit) });
+    });
+    return panel(c, '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(c.title + ": " + items[0].value + c.unit + " to " + items[items.length - 1].value + c.unit) + '" data-chart="bars">' + s + "</svg>");
+  }
+
+  function renderCharts() {
+    var box = $("[data-charts]"), c = S.charts;
+    if (!box || !c) return;
+    box.innerHTML = lineChart(c.growth) + hbarChart(c.platforms) + vbarChart(c.reach);
+
+    // Bar hover: highlight the bar, show its value
+    $$('svg[data-chart="bars"]', box).forEach(function (svg) {
+      $$(".c-hit", svg).forEach(function (hit) {
+        hit.addEventListener("pointermove", function (e) {
+          svg.classList.add("is-hovering");
+          $$(".c-bar", svg).forEach(function (b) { b.classList.toggle("is-hot", b.dataset.i === hit.dataset.i); });
+          showTip(hit.dataset.tip, e.clientX, e.clientY);
+        });
+        hit.addEventListener("pointerleave", function () { svg.classList.remove("is-hovering"); hideTip(); });
+      });
+    });
+
+    // Line hover: crosshair snaps to the nearest point
+    var line = $('svg[data-chart="line"]', box), g = c.growth;
+    if (line) {
+      var hit = $(".c-hit", line), hov = $(".c-hover", line), cross = $(".c-cross", hov), dot = $(".c-dot", hov);
+      var W = 320, L = 30, R = 34, T = 14, ph = 180 - 14 - 26, max = niceMax(Math.max.apply(null, g.points.map(function (p) { return p.value; })));
+      hit.addEventListener("pointermove", function (e) {
+        var box2 = line.getBoundingClientRect(), sx = ((e.clientX - box2.left) / box2.width) * W;
+        var i = Math.round(((sx - L) / (W - L - R)) * (g.points.length - 1));
+        i = Math.max(0, Math.min(g.points.length - 1, i));
+        var px = L + ((W - L - R) * i) / (g.points.length - 1), py = T + ph - (ph * g.points[i].value) / max;
+        cross.setAttribute("x1", px); cross.setAttribute("x2", px);
+        dot.setAttribute("cx", px); dot.setAttribute("cy", py);
+        hov.setAttribute("visibility", "visible");
+        var scale = box2.width / W;
+        showTip(g.points[i].label + " · " + g.points[i].value + g.unit, box2.left + px * scale, box2.top + py * scale);
+      });
+      hit.addEventListener("pointerleave", function () { hov.setAttribute("visibility", "hidden"); hideTip(); });
+    }
+  }
+
+  /* ---- Videos + photos ------------------------------------------------ */
+  var PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>';
+  var ITEMS = []; // flat list used by the lightbox
 
   function isFile(src) { return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(src || ""); }
 
-  function renderGallery() {
-    var box = $("[data-gallery]");
-    if (!box || !S.videos) return;
-    box.innerHTML = S.videos.map(function (v, i) {
-      var media = '<img src="' + esc(v.poster) + '" alt="" loading="lazy">';
-      if (isFile(v.src)) media += '<video muted loop playsinline preload="none" src="' + esc(v.src) + '"></video>';
-      return '<button class="card reveal" style="--d:' + ((i % 3) * 0.08) + 's" data-index="' + i + '" data-cat="' + esc(v.category) + '" ' +
-        'aria-label="Open ' + esc(v.title) + " for " + esc(v.client) + ", " + esc(v.metric) + '">' +
-        '<div class="card__frame">' + media +
-          '<span class="card__tag">' + esc(CATEGORY[v.category] || v.category) + "</span>" +
-          '<span class="card__play">' + PLAY_ICON + "</span>" +
-          '<div class="card__overlay"><div class="card__metric">' + esc(v.metric) + "</div></div>" +
-        "</div>" +
-        '<div class="card__meta"><span class="card__title">' + esc(v.title) + '</span><span class="card__client">' + esc(v.client) + "</span></div>" +
-      "</button>";
-    }).join("");
+  function renderShowcase() {
+    (S.videos || []).forEach(function (v) { ITEMS.push({ type: "video", d: v }); });
+    (S.photography || []).forEach(function (p) { ITEMS.push({ type: "photo", d: p }); });
 
-    // Muted previews for self-hosted videos: hover on desktop, in-view on touch.
+    $$("[data-videos]").forEach(function (box) {
+      var cat = box.getAttribute("data-videos");
+      box.innerHTML = ITEMS.map(function (it, idx) {
+        if (it.type !== "video" || it.d.category !== cat) return "";
+        var v = it.d, media = '<img src="' + esc(v.poster) + '" alt="" loading="lazy">';
+        if (isFile(v.src)) media += '<video muted loop playsinline preload="none" src="' + esc(v.src) + '"></video>';
+        return '<button class="item reveal" data-index="' + idx + '" aria-label="Play ' + esc(v.title) + " for " + esc(v.client) + ", " + esc(v.metric) + '">' +
+          '<span class="phone">' + media + '<span class="phone__play">' + PLAY + '</span><span class="chip">' + esc(v.metric) + "</span></span>" +
+          '<span class="item__info"><span class="item__client">' + esc(v.client) + '</span><span class="item__desc">' + esc(v.desc) + "</span></span></button>";
+      }).join("");
+    });
+
+    $$("[data-photos]").forEach(function (box) {
+      var cat = box.getAttribute("data-photos");
+      box.innerHTML = ITEMS.map(function (it, idx) {
+        if (it.type !== "photo" || it.d.category !== cat) return "";
+        var p = it.d;
+        return '<button class="item reveal" data-index="' + idx + '" aria-label="View photo for ' + esc(p.client) + '">' +
+          '<span class="photo"><img src="' + esc(p.src) + '" alt="' + esc(p.client + ": " + p.desc) + '" loading="lazy"></span>' +
+          '<span class="item__info"><span class="item__client">' + esc(p.client) + '</span><span class="item__desc">' + esc(p.desc) + "</span></span></button>";
+      }).join("");
+    });
+
+    // Stagger reveals within each row
+    $$(".phones, .photos").forEach(function (row) {
+      $$(".item", row).forEach(function (it, i) { it.style.setProperty("--d", (i * 0.07) + "s"); });
+    });
+
+    // Muted previews for self-hosted videos: hover on desktop, in view on touch
     if (reduceMotion) return;
     var canHover = window.matchMedia("(hover: hover)").matches;
-    $$(".card", box).forEach(function (card) {
-      var vid = $("video", card);
+    $$("[data-videos] .item").forEach(function (item) {
+      var vid = $("video", item);
       if (!vid) return;
-      var play = function () { var p = vid.play(); if (p && p.catch) p.catch(function () {}); card.classList.add("is-playing"); };
-      var stop = function () { vid.pause(); card.classList.remove("is-playing"); };
-      if (canHover) {
-        card.addEventListener("mouseenter", play);
-        card.addEventListener("mouseleave", stop);
-      } else if ("IntersectionObserver" in window) {
-        new IntersectionObserver(function (en) { en[0].isIntersecting ? play() : stop(); }, { threshold: 0.7 }).observe(card);
+      var play = function () { var p = vid.play(); if (p && p.catch) p.catch(function () {}); item.classList.add("is-playing"); };
+      var stop = function () { vid.pause(); item.classList.remove("is-playing"); };
+      if (canHover) { item.addEventListener("mouseenter", play); item.addEventListener("mouseleave", stop); }
+      else if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (en) { en[0].isIntersecting ? play() : stop(); }, { threshold: 0.7 }).observe(item);
       }
     });
   }
 
-  function wireFilters() {
-    var buttons = $$("[data-filter]");
-    buttons.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var f = btn.dataset.filter;
-        buttons.forEach(function (b) {
-          var on = b === btn;
-          b.classList.toggle("is-active", on);
-          b.setAttribute("aria-selected", on ? "true" : "false");
-        });
-        $$(".card").forEach(function (c) {
-          c.classList.add("is-in");
-          c.classList.toggle("is-hidden", f !== "all" && c.dataset.cat !== f);
-        });
-      });
-    });
-  }
-
-  /* ---- Render: case studies ------------------------------------------ */
+  /* ---- Case studies + packages --------------------------------------- */
   function renderCases() {
     var box = $("[data-cases]");
-    if (!box || !S.cases) return;
-    box.innerHTML = S.cases.map(function (c) {
-      var stats = c.stats.map(function (s) {
-        return '<div><div class="case__stat-k">' + esc(s.k) + '</div><div class="case__stat-v">' +
-          (s.from ? '<span class="case__stat-from">from ' + esc(s.from) + "</span>" : "") + esc(s.to) + "</div></div>";
-      }).join("");
-      return '<article class="case">' +
-        '<figure class="case__img reveal"><img src="' + esc(c.image) + '" alt="' + esc(c.client) + ' content preview" loading="lazy"></figure>' +
-        '<div class="case__body reveal" style="--d:.1s">' +
-          '<h3 class="case__client">' + esc(c.client) + "</h3>" +
-          '<p class="case__industry">' + esc(c.industry) + "</p>" +
-          '<div class="case__block"><h4>The challenge</h4><p>' + esc(c.challenge) + "</p></div>" +
-          '<div class="case__block"><h4>The approach</h4><p>' + esc(c.strategy) + "</p></div>" +
-          '<div class="case__stats">' + stats + "</div>" +
-        "</div></article>";
+    if (!box) return;
+    box.innerHTML = (S.cases || []).map(function (c, i) {
+      return '<article class="card card--sand case reveal" style="--d:' + (i * 0.08) + 's">' +
+        '<p class="case__industry">' + esc(c.industry) + '</p><h3 class="case__client">' + esc(c.client) + "</h3>" +
+        '<p class="case__challenge">' + esc(c.challenge) + "</p>" +
+        '<div class="case__kpi"><div class="case__kpi-label">' + esc(c.kpi) + "</div>" +
+        '<div class="case__fig">' + esc(c.from) + '<small aria-label="to">→</small>' + esc(c.to) + "</div>" +
+        '<div class="case__time">' + esc(c.time) + "</div></div></article>";
     }).join("");
   }
 
-  /* ---- Render: packages ---------------------------------------------- */
   function renderPackages() {
     var box = $("[data-packages]");
-    if (!box || !S.packages) return;
-    box.innerHTML = S.packages.map(function (p, i) {
+    if (!box) return;
+    box.innerHTML = (S.packages || []).map(function (p, i) {
       var msg = "Hi Valeria! I'm interested in the " + p.name + " package. Could you tell me more?";
       return '<article class="pkg reveal' + (p.featured ? " pkg--featured" : "") + '" style="--d:' + (i * 0.08) + 's">' +
-        (p.featured ? '<span class="pkg__badge">Most chosen</span>' : "") +
-        '<h3 class="pkg__name">' + esc(p.name) + "</h3>" +
-        '<p class="pkg__tag">' + esc(p.tagline) + "</p>" +
-        '<p class="pkg__price">' + esc(p.price || "Tailored quote") + "</p>" +
-        '<ul class="ticks">' + p.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ul>" +
-        '<a class="btn btn--outline" data-wa data-wa-msg="' + esc(msg) + '" href="#">Choose ' + esc(p.name) + "</a>" +
-      "</article>";
+        (p.featured ? '<span class="pkg__badge">Most booked</span>' : "") +
+        '<h3 class="pkg__name">' + esc(p.name) + '</h3><p class="pkg__tag">' + esc(p.tagline) + "</p>" +
+        '<div class="pkg__price"><span class="pkg__from">Starting at</span><span class="pkg__amount">' + esc(p.price) + '</span><span class="pkg__per">' + esc(p.per || "") + "</span></div>" +
+        "<ul>" + p.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ul>" +
+        '<a class="pill pill--mist" data-wa data-wa-msg="' + esc(msg) + '" href="#">Book now</a></article>';
     }).join("");
   }
 
-  /* ---- Render: testimonials slider ----------------------------------- */
+  /* ---- Testimonials --------------------------------------------------- */
   function renderQuotes() {
     var stage = $("[data-quotes]"), dots = $("[data-dots]"), slider = $("[data-slider]");
     if (!stage || !S.testimonials) return;
     stage.innerHTML = S.testimonials.map(function (t, i) {
-      return '<figure class="quote' + (i === 0 ? " is-active" : "") + '" id="q' + i + '"' + (i === 0 ? "" : ' aria-hidden="true"') + ">" +
-        "<blockquote>" + esc(t.quote) + "</blockquote>" +
-        '<figcaption><div class="quote__name">' + esc(t.name) + '</div><div class="quote__role">' + esc(t.role) + "</div></figcaption></figure>";
+      return '<figure class="quote' + (i === 0 ? " is-active" : "") + '" id="q' + i + '"' + (i ? ' aria-hidden="true"' : "") + ">" +
+        "<blockquote>“" + esc(t.quote) + "”</blockquote><figcaption>" + esc(t.name) + " · " + esc(t.role) + "</figcaption></figure>";
     }).join("");
     dots.innerHTML = S.testimonials.map(function (t, i) {
       return '<button role="tab" aria-controls="q' + i + '" aria-selected="' + (i === 0) + '" aria-label="Testimonial ' + (i + 1) + '"></button>';
     }).join("");
-
     var quotes = $$(".quote", stage), btns = $$("button", dots), cur = 0, timer = null;
     function go(n) {
       cur = (n + quotes.length) % quotes.length;
@@ -190,8 +329,8 @@
       });
       btns.forEach(function (b, i) { b.setAttribute("aria-selected", i === cur ? "true" : "false"); });
     }
-    function start() { if (!reduceMotion && quotes.length > 1) { stop(); timer = setInterval(function () { go(cur + 1); }, 7000); } }
     function stop() { clearInterval(timer); }
+    function start() { stop(); if (!reduceMotion && quotes.length > 1) timer = setInterval(function () { go(cur + 1); }, 7000); }
     btns.forEach(function (b, i) { b.addEventListener("click", function () { go(i); start(); }); });
     slider.addEventListener("mouseenter", stop);
     slider.addEventListener("mouseleave", start);
@@ -200,87 +339,74 @@
     start();
   }
 
-  /* ---- Render: socials + year ---------------------------------------- */
-  function renderFooter() {
-    var ul = $("[data-socials]");
-    if (ul && S.socials) {
-      ul.innerHTML = S.socials.map(function (s) {
-        return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.label) + "</a></li>";
-      }).join("");
-    }
-    var y = $("[data-year]");
-    if (y) y.textContent = new Date().getFullYear();
-  }
-
   /* ---- Lightbox ------------------------------------------------------- */
-  var lb = $("[data-lightbox]"), lbIndex = 0, lastFocus = null;
+  var lb = $("[data-lightbox]"), cur = 0, lastFocus = null;
 
   function embedFor(src) {
     var m;
-    if ((m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/i.exec(src))) {
-      return "https://www.youtube-nocookie.com/embed/" + m[1] + "?autoplay=1&rel=0&playsinline=1";
-    }
-    if ((m = /vimeo\.com\/(?:video\/)?(\d+)/i.exec(src))) {
-      return "https://player.vimeo.com/video/" + m[1] + "?autoplay=1&title=0&byline=0";
-    }
+    if ((m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/i.exec(src))) return "https://www.youtube-nocookie.com/embed/" + m[1] + "?autoplay=1&rel=0&playsinline=1";
+    if ((m = /vimeo\.com\/(?:video\/)?(\d+)/i.exec(src))) return "https://player.vimeo.com/video/" + m[1] + "?autoplay=1&title=0&byline=0";
     return null;
   }
 
-  function visibleIndexes() {
-    return $$(".card").filter(function (c) { return !c.classList.contains("is-hidden"); })
-      .map(function (c) { return +c.dataset.index; });
-  }
-
-  function fillLightbox(i) {
-    var v = S.videos[i], media = $("[data-lb-media]", lb), src = v.src || "", embed;
-    lbIndex = i;
-    if (isFile(src)) {
-      media.innerHTML = '<video controls autoplay playsinline poster="' + esc(v.poster) + '" src="' + esc(src) + '"></video>';
-    } else if ((embed = embedFor(src))) {
-      media.innerHTML = '<iframe src="' + esc(embed) + '" title="' + esc(v.title) + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
-    } else if (src) {
-      var host = /tiktok/i.test(src) ? "TikTok" : /instagram/i.test(src) ? "Instagram" : "the original post";
-      media.innerHTML = '<div class="lightbox__link"><img src="' + esc(v.poster) + '" alt=""><p style="margin-top:16px"><a href="' + esc(src) + '" target="_blank" rel="noopener">Watch on ' + host + " ↗</a></p></div>";
+  function fill(idx) {
+    var it = ITEMS[idx], d = it.d, media = $("[data-lb-media]", lb), embed;
+    cur = idx;
+    media.classList.toggle("lightbox__media--photo", it.type === "photo");
+    if (it.type === "photo") {
+      media.innerHTML = '<img src="' + esc(d.src) + '" alt="' + esc(d.client + ": " + d.desc) + '">';
+    } else if (isFile(d.src)) {
+      media.innerHTML = '<video controls autoplay playsinline poster="' + esc(d.poster) + '" src="' + esc(d.src) + '"></video>';
+    } else if ((embed = embedFor(d.src || ""))) {
+      media.innerHTML = '<iframe src="' + esc(embed) + '" title="' + esc(d.title) + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    } else if (d.src) {
+      var host = /tiktok/i.test(d.src) ? "TikTok" : /instagram/i.test(d.src) ? "Instagram" : "the original post";
+      media.innerHTML = '<div class="lightbox__ext"><img src="' + esc(d.poster) + '" alt=""><a href="' + esc(d.src) + '" target="_blank" rel="noopener">Watch on ' + host + " ↗</a></div>";
     } else {
-      media.innerHTML = '<img src="' + esc(v.poster) + '" alt="' + esc(v.title) + ' preview">';
+      media.innerHTML = '<img src="' + esc(d.poster) + '" alt="' + esc(d.title) + ' preview">';
     }
-    $("[data-lb-cat]", lb).textContent = CATEGORY[v.category] || v.category;
-    $("[data-lb-title]", lb).textContent = v.title;
-    $("[data-lb-client]", lb).textContent = v.client;
-    $("[data-lb-metric]", lb).textContent = v.metric;
-    $("[data-lb-cta]", lb).href = waLink("Hi Valeria! I loved your \"" + v.title + "\" video for " + v.client + ". I'd like something like this for my brand.");
+    var isVideo = it.type === "video";
+    $("[data-lb-cat]", lb).textContent = (isVideo ? "videography" : "photography") + " · " + (GROUP[d.category] || d.category).toLowerCase();
+    $("[data-lb-title]", lb).textContent = isVideo ? d.title : d.client;
+    $("[data-lb-desc]", lb).textContent = isVideo ? d.client + ": " + d.desc : d.desc;
+    $("[data-lb-metric]", lb).textContent = isVideo ? d.metric : "";
+    $("[data-lb-cta]", lb).href = waLink(isVideo
+      ? "Hi Valeria! I loved your \"" + d.title + "\" video for " + d.client + ". I'd like something like this for my brand."
+      : "Hi Valeria! I loved the photos you made for " + d.client + ". I'd like something like this for my brand.");
   }
 
-  function openLightbox(i, opener) {
+  function open(idx, opener) {
     lastFocus = opener || document.activeElement;
-    fillLightbox(i);
+    fill(idx);
     lb.hidden = false;
     document.body.classList.add("no-scroll");
     $(".lightbox__close", lb).focus();
   }
-  function closeLightbox() {
+  function close() {
     lb.hidden = true;
-    $("[data-lb-media]", lb).innerHTML = ""; // stops playback
+    $("[data-lb-media]", lb).innerHTML = "";
     document.body.classList.remove("no-scroll");
     if (lastFocus) lastFocus.focus();
   }
   function step(dir) {
-    var list = visibleIndexes(), pos = list.indexOf(lbIndex);
-    fillLightbox(list[(pos + dir + list.length) % list.length]);
+    var type = ITEMS[cur].type;
+    var list = ITEMS.map(function (it, i) { return it.type === type ? i : -1; }).filter(function (i) { return i > -1; });
+    var pos = list.indexOf(cur);
+    fill(list[(pos + dir + list.length) % list.length]);
   }
 
   function wireLightbox() {
     if (!lb) return;
-    $("[data-gallery]").addEventListener("click", function (e) {
-      var card = e.target.closest(".card");
-      if (card) openLightbox(+card.dataset.index, card);
+    document.addEventListener("click", function (e) {
+      var item = e.target.closest(".item[data-index]");
+      if (item) open(+item.dataset.index, item);
     });
-    $$("[data-close]", lb).forEach(function (el) { el.addEventListener("click", closeLightbox); });
+    $$("[data-close]", lb).forEach(function (b) { b.addEventListener("click", close); });
     $("[data-prev]", lb).addEventListener("click", function () { step(-1); });
     $("[data-next]", lb).addEventListener("click", function () { step(1); });
     document.addEventListener("keydown", function (e) {
       if (lb.hidden) return;
-      if (e.key === "Escape") closeLightbox();
+      if (e.key === "Escape") close();
       else if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
       else if (e.key === "Tab") {
@@ -292,47 +418,42 @@
     });
   }
 
-  /* ---- Nav + floating CTA -------------------------------------------- */
-  function wireChrome() {
-    var nav = $("[data-nav]"), float = $("[data-float]");
-    var onScroll = function () { nav.classList.toggle("is-scrolled", window.scrollY > 24); };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-
+  /* ---- Floating CTA --------------------------------------------------- */
+  function wireFloat() {
+    var float = $("[data-float]");
     if (!float || !("IntersectionObserver" in window)) return;
-    var heroVisible = true, finalVisible = false;
-    var update = function () { float.classList.toggle("is-visible", !heroVisible && !finalVisible); };
-    new IntersectionObserver(function (en) { heroVisible = en[0].isIntersecting; update(); }, { threshold: 0.15 }).observe($(".hero"));
-    new IntersectionObserver(function (en) { finalVisible = en[0].isIntersecting; update(); }, { threshold: 0.2 }).observe($(".final"));
+    var heroIn = true, contactIn = false;
+    var update = function () { float.classList.toggle("is-visible", !heroIn && !contactIn); };
+    new IntersectionObserver(function (en) { heroIn = en[0].isIntersecting; update(); }, { threshold: 0.1 }).observe($("#top"));
+    new IntersectionObserver(function (en) { contactIn = en[0].isIntersecting; update(); }, { threshold: 0.15 }).observe($("#contact"));
   }
 
   /* ---- Reveal on scroll ---------------------------------------------- */
   function wireReveal() {
     var els = $$(".reveal");
-    if (reduceMotion || !("IntersectionObserver" in window)) {
-      els.forEach(function (el) { el.classList.add("is-in"); });
-      return;
-    }
+    if (reduceMotion || !("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("is-in"); }); return; }
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
-      });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-    els.forEach(function (el) { io.observe(el); });
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+    els.forEach(function (e) { io.observe(e); });
   }
 
   /* ---- Init ----------------------------------------------------------- */
+  applyPhotos();
+  renderSocials();
   renderBrands();
+  renderHighlights();
+  renderServices();
   renderMetrics();
-  renderGallery();
+  renderCharts();
+  renderShowcase();
   renderCases();
   renderPackages();
   renderQuotes();
-  renderFooter();
-  wireWhatsApp(document);
-  wireFilters();
+  var y = $("[data-year]"); if (y) y.textContent = new Date().getFullYear();
+  wireWhatsApp();
   wireLightbox();
-  wireChrome();
+  wireFloat();
   wireReveal();
   animateCounters();
 })();

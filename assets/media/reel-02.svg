@@ -1,11 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
-<defs>
-<linearGradient id="g" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2E2722"/><stop offset="1" stop-color="#6B5444"/></linearGradient>
-<radialGradient id="l" cx=".7" cy=".25" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .09 0"/></filter>
-</defs>
-<rect width="540" height="960" fill="url(#g)"/>
-<path d="M129.6 672.0 V370.79999999999995 A140.4 140.4 0 0 1 410.4 370.79999999999995 V672.0 Z" fill="#C9A688" opacity=".45"/>
-<rect width="540" height="960" fill="url(#l)"/>
-<rect width="540" height="960" filter="url(#n)"/>
+<defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#4A4039"/><stop offset="1" stop-color="#2F2823"/></linearGradient>
+<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter></defs>
+<rect width="540" height="960" fill="url(#g)"/><path d="M145.8 672.0 V316.2 A124.2 124.2 0 0 1 394.20000000000005 316.2 V672.0 Z" fill="#6E6158" opacity=".4"/><rect width="540" height="960" filter="url(#n)"/>
+<g font-family="Helvetica, Arial, sans-serif" fill="#E2D9CA" text-anchor="middle" opacity=".72">
+<text x="270.0" y="787.1999999999999" font-size="24" font-weight="700" letter-spacing="4.32">VIDEO 02</text>
+<text x="270.0" y="825.5999999999999" font-size="17.28" letter-spacing="1.44">poster · 1080 × 1920</text></g>
 </svg>
