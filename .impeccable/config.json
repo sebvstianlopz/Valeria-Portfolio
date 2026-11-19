@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "italic-serif-display",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-19T00:23:26.951Z",
+        "reason": "Approved plan specifies editorial register with italic serif accents on single key words (headlines themselves are roman); intentional brand choice"
+      }
+    ]
+  }
+}
